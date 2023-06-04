@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import ErrorPage from "./pages/Error/ErrorPage";
 import Home from "./pages/Home/Home";
 import Navbar from "./common/layouts/Navbar";
+import Search from "./pages/Search/Search";
 
 class App extends React.Component {
   render() {
@@ -14,6 +15,7 @@ class App extends React.Component {
           <Routes>
             <Route path="/" element={<Navbar />}>
               <Route index element={<Home />} />
+              <Route path="search" element={<Search />} />
 
               <Route path="error" element={<ErrorPage />} />
 

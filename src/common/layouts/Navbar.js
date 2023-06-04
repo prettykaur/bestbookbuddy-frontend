@@ -99,7 +99,7 @@ function Navbar() {
                     key={page}
                     onClick={() => {
                       handleCloseNavMenu();
-                      navigate(`/${page}`);
+                      navigate(`/${page.toLowerCase()}`);
                     }}
                   >
                     <Typography textAlign="center">{page}</Typography>
@@ -130,10 +130,12 @@ function Navbar() {
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
                 <Button
+                  disableRipple
+                  disableTouchRipple
                   key={page}
                   onClick={() => {
                     handleCloseNavMenu();
-                    navigate(`/${page}`);
+                    navigate(`/${page.toLowerCase()}`);
                   }}
                   sx={{ my: 2, mx: 1, color: "white", display: "block" }}
                 >
