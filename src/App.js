@@ -1,17 +1,26 @@
 import React from "react";
-import logo from "./logo.png";
 import "./App.css";
+
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import ErrorPage from "./pages/Error/ErrorPage";
+import Home from "./pages/Home/Home";
+import Navbar from "./common/layouts/Navbar";
 
 class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-        </header>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navbar />}>
+              <Route index element={<Home />} />
+
+              <Route path="error" element={<ErrorPage />} />
+
+              <Route path="*" element={<Navigate to="/error" replace />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
       </div>
     );
   }
