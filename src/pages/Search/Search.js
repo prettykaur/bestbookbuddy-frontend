@@ -77,6 +77,24 @@ function Search() {
     setIsLoading(false);
   };
 
+  function unique(a, fn) {
+    if (a.length === 0 || a.length === 1) {
+      return a;
+    }
+    if (!fn) {
+      return a;
+    }
+
+    for (let i = 0; i < a.length; i++) {
+      for (let j = i + 1; j < a.length; j++) {
+        if (fn(a[i], a[j])) {
+          a.splice(i, 1);
+        }
+      }
+    }
+    return a;
+  }
+
   return (
     <Box flex={1}>
       <Container maxWidth="xl">
@@ -96,7 +114,13 @@ function Search() {
           )}
           {isLoading && <CircularProgress />}
           {searchResults &&
-            searchResults.map((result) => (
+            unique(
+              searchResults,
+              (a, b) =>
+                a.volumeInfo.title === b.volumeInfo.title &&
+                a.volumeInfo.authors?.join(", ") ===
+                  b.volumeInfo.authors?.join(", ")
+            ).map((result) => (
               <SearchResultBubble key={result.id + result.etag} {...result} />
             ))}
           <Button variant="contained" onClick={handleLoadMore}>
