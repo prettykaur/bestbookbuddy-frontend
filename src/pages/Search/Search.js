@@ -48,7 +48,7 @@ function Search() {
 
   const handleLoadMore = async (e) => {
     const response = await axios.get(
-      `https://www.googleapis.com/books/v1/volumes?q=${searchInput}&startIndex=${searchResults.length}&printType=books&key=${process.env.REACT_APP_BOOKS_API_KEY}`
+      `https://openlibrary.org/search.json?q=${searchInput}`
     );
 
     console.log(response.data.items);
@@ -63,19 +63,37 @@ function Search() {
 
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${searchInput}&printType=books&key=${process.env.REACT_APP_BOOKS_API_KEY}`
+        `https://openlibrary.org/search.json?q=${searchInput}`
       );
-      if (response.data.totalItems === 0) {
+      if (response.data.numFound === 0) {
         setSearchResults("no-results-found");
         return;
       }
-      setSearchResults(response.data.items);
+      setSearchResults(response.data.docs);
     } catch (err) {
       console.error();
     }
 
     setIsLoading(false);
   };
+
+  function unique(a, fn) {
+    if (a.length === 0 || a.length === 1) {
+      return a;
+    }
+    if (!fn) {
+      return a;
+    }
+
+    for (let i = 0; i < a.length; i++) {
+      for (let j = i + 1; j < a.length; j++) {
+        if (fn(a[i], a[j])) {
+          a.splice(i, 1);
+        }
+      }
+    }
+    return a;
+  }
 
   return (
     <Box flex={1}>
@@ -94,10 +112,16 @@ function Search() {
               Showing results for: {searchParams.get("searchInput")}
             </Typography>
           )}
+          {searchResults.length}
           {isLoading && <CircularProgress />}
           {searchResults &&
-            searchResults.map((result) => (
-              <SearchResultBubble key={result.id + result.etag} {...result} />
+            unique(
+              searchResults,
+              (a, b) =>
+                a.title === b.title &&
+                a.author_name?.join(", ") === b.author_name?.join(", ")
+            ).map((result) => (
+              <SearchResultBubble key={result.key} {...result} />
             ))}
           <Button variant="contained" onClick={handleLoadMore}>
             Load 10 more
