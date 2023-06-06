@@ -14,20 +14,15 @@ function SearchResultBubble(result) {
       className="search-result-bubble"
       onClick={() => navigate("/book")}
     >
-      {result.volumeInfo.imageLinks?.thumbnail ||
-      result.volumeInfo.imageLinks?.smallThumbnail ? (
+      {result.cover_i ? (
         <img
           alt="book cover"
-          src={
-            result.volumeInfo.imageLinks?.thumbnail ||
-            result.volumeInfo.imageLinks?.smallThumbnail ||
-            ""
-          }
-          style={{ width: "71px" }}
+          src={`https://covers.openlibrary.org/b/id/${result.cover_i}-M.jpg`}
+          style={{ minWidth: "71px", height: "110px" }}
         />
       ) : (
         <Stack
-          width={"71px"}
+          minWidth={"71px"}
           height={"110px"}
           bgcolor={"#63167f"}
           alignItems={"center"}
@@ -38,9 +33,20 @@ function SearchResultBubble(result) {
       )}
 
       <Stack ml={1}>
-        <Typography variant="h5">{result.volumeInfo.title}</Typography>
+        <Typography variant="h5">{result.title}</Typography>
         <Typography variant="subtitle2">
-          {result.volumeInfo?.authors?.join(", ") ?? "Anonymous"}
+          {result.author_name?.join(", ") ?? "Anonymous"}
+        </Typography>
+        <Typography variant="caption">
+          First Published: {result.first_publish_year ?? ""}
+        </Typography>
+        <Typography variant="caption">
+          {result.edition_count ?? ""}{" "}
+          {result.edition_count
+            ? result.edition_count === 1
+              ? "edition"
+              : "editions"
+            : ""}
         </Typography>
       </Stack>
     </Stack>

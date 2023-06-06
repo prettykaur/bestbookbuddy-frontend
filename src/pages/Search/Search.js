@@ -33,6 +33,7 @@ function Search() {
 
   const [searchType, setSearchType] = useState("None");
   const [searchResults, setSearchResults] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,33 +49,36 @@ function Search() {
 
   const handleLoadMore = async (e) => {
     const response = await axios.get(
-      `https://www.googleapis.com/books/v1/volumes?q=${searchInput}&startIndex=${searchResults.length}&printType=books&key=${process.env.REACT_APP_BOOKS_API_KEY}`
+      `https://openlibrary.org/search.json?q=${searchInput}&page=${currentPage}`
     );
 
-    console.log(response.data.items);
+    console.log(response.data.docs);
 
-    setSearchResults((prevResult) => [...prevResult, ...response.data.items]);
+    setSearchResults((prevResult) => [...prevResult, ...response.data.docs]);
+    setCurrentPage((prevPage) => prevPage + 1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setCurrentPage(1);
     setIsLoading(true);
     setSearchParams({ searchInput: searchInput });
 
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${searchInput}&printType=books&key=${process.env.REACT_APP_BOOKS_API_KEY}`
+        `https://openlibrary.org/search.json?q=${searchInput}&page=${currentPage}`
       );
-      if (response.data.totalItems === 0) {
+      if (response.data.numFound === 0) {
         setSearchResults("no-results-found");
         return;
       }
-      setSearchResults(response.data.items);
+      setSearchResults(response.data.docs);
     } catch (err) {
       console.error();
     }
 
     setIsLoading(false);
+    setCurrentPage((prevPage) => prevPage + 1);
   };
 
   function unique(a, fn) {
@@ -98,6 +102,7 @@ function Search() {
   return (
     <Box flex={1}>
       <Container maxWidth="xl">
+        <pre>{JSON.stringify(currentPage, null, 2)}</pre>
         <SearchComposer
           handleSubmit={handleSubmit}
           searchType={searchType}
@@ -112,20 +117,26 @@ function Search() {
               Showing results for: {searchParams.get("searchInput")}
             </Typography>
           )}
+
           {isLoading && <CircularProgress />}
-          {searchResults &&
-            unique(
-              searchResults,
-              (a, b) =>
-                a.volumeInfo.title === b.volumeInfo.title &&
-                a.volumeInfo.authors?.join(", ") ===
-                  b.volumeInfo.authors?.join(", ")
-            ).map((result) => (
-              <SearchResultBubble key={result.id + result.etag} {...result} />
-            ))}
-          <Button variant="contained" onClick={handleLoadMore}>
-            Load 10 more
-          </Button>
+          {searchResults.length !== 0 && (
+            <>
+              {
+                // unique(
+                //   searchResults,
+                //   (a, b) =>
+                //     a.title === b.title &&
+                //     a.author_name?.join(", ") === b.author_name?.join(", ")
+                // )git
+                searchResults.map((result) => (
+                  <SearchResultBubble key={result.key} {...result} />
+                ))
+              }
+              <Button variant="contained" onClick={handleLoadMore}>
+                Load more
+              </Button>
+            </>
+          )}
         </Stack>
       </Container>
     </Box>
