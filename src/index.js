@@ -11,6 +11,7 @@ import {
   createTheme,
   responsiveFontSizes,
 } from "@mui/material";
+import BookInfoProvider from "./contexts/BookInfoProvider";
 
 let theme = createTheme({
   palette: {
@@ -62,9 +63,11 @@ root.render(
         "read:current_user update:current_user_metadata openid profile email phone",
     }}
   >
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
+    <BookInfoProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </BookInfoProvider>
   </Auth0Provider>
 );

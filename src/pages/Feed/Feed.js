@@ -1,6 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../data/constants";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -16,11 +16,13 @@ function Feed() {
   useEffect(() => {
     const checkOrCreateUser = async () => {
       const accessToken = await getAccessTokenSilently({
-        authorizationParams: {
-          audience: process.env.REACT_APP_AUTH_AUDIENCE,
-          scope: "read:current_user openid profile email phone",
-        },
+        audience: process.env.REACT_APP_AUTH_AUDIENCE,
+        scope: "read:current_user openid profile email phone",
       });
+
+      console.log(user.nickname);
+      console.log(user.email);
+      console.log(user.picture);
 
       try {
         await axios.post(

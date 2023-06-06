@@ -9,6 +9,9 @@ import Search from "./pages/Search/Search";
 import BookPage from "./pages/Book/BookPage";
 import Feed from "./pages/Feed/Feed";
 import Logout from "./pages/Logout/Logout";
+import BookInfo from "./pages/Book/BookInfo/BookInfo";
+import BookReviews from "./pages/Book/BookReviews/BookReviews";
+import BookDiscussions from "./pages/Book/BookDiscussions/BookDiscussions";
 
 class App extends React.Component {
   render() {
@@ -20,7 +23,11 @@ class App extends React.Component {
               <Route index element={<Home />} />
               <Route path="feed" element={<Feed />} />
               <Route path="search" element={<Search />} />
-              <Route path="book" element={<BookPage />} />
+              <Route path="book/:bookId" element={<BookPage />}>
+                <Route index element={<BookInfo />} />
+                <Route path="reviews" element={<BookReviews />} />
+                <Route path="discussions" element={<BookDiscussions />} />
+              </Route>
 
               <Route path="logout" element={<Logout />} />
 
