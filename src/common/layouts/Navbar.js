@@ -14,6 +14,9 @@ import MenuItem from "@mui/material/MenuItem";
 
 import { LocalLibraryTwoTone } from "@mui/icons-material";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import { AUTH_LOGOUT_REDIRECT_URL } from "../../data/constants";
+import LoginWithAuth0Button from "../LoginWithAuth0";
 
 const pages = ["Feed", "Search", "Marketplace"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -24,6 +27,7 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const navigate = useNavigate();
+  const { user, isAuthenticated, isLoading, logout } = useAuth0();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -145,33 +149,51 @@ function Navbar() {
             </Box>
 
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {settings.map((setting) => (
+              {!isAuthenticated ? (
+                <LoginWithAuth0Button />
+              ) : (
+                <>
+                  <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="/static/images/avatar/2.jpg"
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{ mt: "45px" }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                  >
+                    {/* {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
-                ))}
-              </Menu>
+                ))} */}
+                    <MenuItem
+                      onClick={() =>
+                        logout({
+                          logoutParams: { returnTo: AUTH_LOGOUT_REDIRECT_URL },
+                        })
+                      }
+                    >
+                      <Typography textAlign="center">Logout</Typography>
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
             </Box>
           </Toolbar>
         </Container>

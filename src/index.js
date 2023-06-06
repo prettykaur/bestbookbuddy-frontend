@@ -57,6 +57,9 @@ root.render(
     clientId={process.env.REACT_APP_AUTH_CLIENT_ID}
     authorizationParams={{
       redirect_uri: AUTH_LOGIN_REDIRECT_URL,
+      audience: process.env.REACT_APP_AUTH_AUDIENCE,
+      scope:
+        "read:current_user update:current_user_metadata openid profile email phone",
     }}
   >
     <ThemeProvider theme={theme}>
