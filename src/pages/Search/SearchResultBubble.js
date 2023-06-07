@@ -18,12 +18,14 @@ function SearchResultBubble(result) {
       }.json`
     );
 
-    let isbn10 = olResponse.data.isbn_10[0] ?? null;
-    let isbn13 = olResponse.data.isbn_13[0] ?? null;
+    let isbn10 = olResponse.data.isbn_10 ? olResponse.data.isbn_10[0] : null;
+    let isbn13 = olResponse.data.isbn_13 ? olResponse.data.isbn_13[0] : null;
 
     const response = await axios.post(`${BACKEND_URL}/books`, {
       title: result.title ?? null,
-      olEditionKey: result.edition_key[result.edition_key.length - 1] ?? null,
+      olEditionKey: result.edition_key
+        ? result.edition_key[result.edition_key.length - 1]
+        : null,
       olEditionCount: result.edition_count ?? null,
       isbn10,
       isbn13,

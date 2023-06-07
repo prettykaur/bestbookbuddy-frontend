@@ -66,7 +66,7 @@ function Search() {
 
     try {
       const response = await axios.get(
-        `https://openlibrary.org/search.json?q=${searchInput}&page=${currentPage}`
+        `https://openlibrary.org/search.json?q=${searchInput}&page=1`
       );
       if (response.data.numFound === 0) {
         setSearchResults("no-results-found");
@@ -102,7 +102,7 @@ function Search() {
   return (
     <Box flex={1}>
       <Container maxWidth="xl">
-        <pre>{JSON.stringify(currentPage, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(currentPage, null, 2)}</pre> */}
         <SearchComposer
           handleSubmit={handleSubmit}
           searchType={searchType}

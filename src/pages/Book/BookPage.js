@@ -43,7 +43,9 @@ function BookPage() {
       // bookInfoContext.setGOOGLE_bookInfo(query);
 
       const authorResponse = await axios.get(
-        `https://openlibrary.org/authors/${response.data.olAuthorKey}.json`
+        `https://openlibrary.org/authors/${
+          response.data.olAuthorKey.split(", ")[0]
+        }.json`
       );
       bookInfoContext.setAuthorInfo(authorResponse.data);
     };
