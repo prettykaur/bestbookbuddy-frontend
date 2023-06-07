@@ -17,17 +17,23 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { AUTH_LOGOUT_REDIRECT_URL } from "../../data/constants";
 import LoginWithAuth0Button from "../LoginWithAuth0";
+import { UserInfoContext } from "../../contexts/UserInfoProvider";
 
 const pages = ["Feed", "Search", "Marketplace"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
+
+  const userInfoContext = React.useContext(UserInfoContext);
+
+  const handleProfileClick = () => {
+    navigate(`/user/${userInfoContext?.userInfo.id}`);
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -179,6 +185,9 @@ function Navbar() {
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))} */}
+                    <MenuItem onClick={handleProfileClick}>
+                      <Typography textAlign="center">Profile</Typography>
+                    </MenuItem>
                     <MenuItem
                       onClick={() =>
                         logout({
