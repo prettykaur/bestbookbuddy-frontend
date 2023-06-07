@@ -12,6 +12,7 @@ import {
   responsiveFontSizes,
 } from "@mui/material";
 import BookInfoProvider from "./contexts/BookInfoProvider";
+import UserInfoProvider from "./contexts/UserInfoProvider";
 
 let theme = createTheme({
   palette: {
@@ -64,10 +65,12 @@ root.render(
     }}
   >
     <BookInfoProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <App />
-      </ThemeProvider>
+      <UserInfoProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <App />
+        </ThemeProvider>
+      </UserInfoProvider>
     </BookInfoProvider>
   </Auth0Provider>
 );

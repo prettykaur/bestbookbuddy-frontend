@@ -9,3 +9,8 @@
   background-color: #ededed;
   cursor: pointer;
 }
+
+.light-grey-hover:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}

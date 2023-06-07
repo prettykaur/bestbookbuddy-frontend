@@ -1,8 +1,9 @@
 import { Stack, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BACKEND_URL } from "../../data/constants";
 import { useAuth0 } from "@auth0/auth0-react";
+import { UserInfoContext } from "../../contexts/UserInfoProvider";
 
 function Feed() {
   const {
@@ -12,6 +13,9 @@ function Feed() {
     loginWithRedirect,
     getAccessTokenSilently,
   } = useAuth0();
+
+  const userInfoContext = useContext(UserInfoContext);
+  console.log(userInfoContext);
 
   useEffect(() => {
     const checkOrCreateUser = async () => {
@@ -25,7 +29,7 @@ function Feed() {
       console.log(user.picture);
 
       try {
-        await axios.post(
+        const response = await axios.post(
           `${BACKEND_URL}/users`,
           {
             username: user.nickname,
@@ -39,6 +43,9 @@ function Feed() {
           }
         );
         console.log("user request went through");
+        console.log(userInfoContext);
+
+        userInfoContext.setUserInfo(response.data);
       } catch (err) {
         console.log(err);
       }
@@ -56,6 +63,7 @@ function Feed() {
       <Typography>
         Will check if user exists in the db when they reach this page
       </Typography>
+      <pre>{JSON.stringify(userInfoContext?.userInfo?.id ?? "Not ready")}</pre>
     </Stack>
   );
 }
