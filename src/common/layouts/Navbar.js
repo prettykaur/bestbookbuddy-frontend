@@ -15,9 +15,10 @@ import MenuItem from "@mui/material/MenuItem";
 import { LocalLibraryTwoTone } from "@mui/icons-material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { AUTH_LOGOUT_REDIRECT_URL } from "../../data/constants";
+import { AUTH_LOGOUT_REDIRECT_URL, BACKEND_URL } from "../../data/constants";
 import LoginWithAuth0Button from "../LoginWithAuth0";
 import { UserInfoContext } from "../../contexts/UserInfoProvider";
+import axios from "axios";
 
 const pages = ["Feed", "Search", "Marketplace"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -27,12 +28,53 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const navigate = useNavigate();
-  const { user, isAuthenticated, isLoading, logout } = useAuth0();
+  const { user, isAuthenticated, isLoading, logout, getAccessTokenSilently } =
+    useAuth0();
 
   const userInfoContext = React.useContext(UserInfoContext);
 
+  React.useEffect(() => {
+    const checkOrCreateUser = async () => {
+      const accessToken = await getAccessTokenSilently({
+        audience: process.env.REACT_APP_AUTH_AUDIENCE,
+        scope: "read:current_user openid profile email phone",
+      });
+
+      console.log(user.nickname);
+      console.log(user.email);
+      console.log(user.picture);
+
+      try {
+        const response = await axios.post(
+          `${BACKEND_URL}/users`,
+          {
+            username: user.nickname,
+            email: user.email,
+            photoUrl: user.picture,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log("user request went through");
+        console.log(userInfoContext);
+
+        userInfoContext.setUserInfo(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    if (isAuthenticated) {
+      checkOrCreateUser();
+    }
+  }, [isAuthenticated]);
+
   const handleProfileClick = () => {
     navigate(`/user/${userInfoContext?.userInfo.id}`);
+    setAnchorElUser(null);
   };
 
   const handleOpenNavMenu = (event) => {

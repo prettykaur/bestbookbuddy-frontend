@@ -15,6 +15,7 @@ import {
 import { Edit } from "@mui/icons-material";
 import { UserInfoContext } from "../../contexts/UserInfoProvider";
 import ProfilePageTabs from "./Tabs/ProfilePageTabs";
+import SpeedDialTooltipOpen from "../../common/ui/SpeedDial";
 
 function ProfilePage() {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();

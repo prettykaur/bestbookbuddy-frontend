@@ -17,45 +17,6 @@ function Feed() {
   const userInfoContext = useContext(UserInfoContext);
   console.log(userInfoContext);
 
-  useEffect(() => {
-    const checkOrCreateUser = async () => {
-      const accessToken = await getAccessTokenSilently({
-        audience: process.env.REACT_APP_AUTH_AUDIENCE,
-        scope: "read:current_user openid profile email phone",
-      });
-
-      console.log(user.nickname);
-      console.log(user.email);
-      console.log(user.picture);
-
-      try {
-        const response = await axios.post(
-          `${BACKEND_URL}/users`,
-          {
-            username: user.nickname,
-            email: user.email,
-            photoUrl: user.picture,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        console.log("user request went through");
-        console.log(userInfoContext);
-
-        userInfoContext.setUserInfo(response.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    if (isAuthenticated) {
-      checkOrCreateUser();
-    }
-  }, [isAuthenticated]);
-
   return (
     <Stack>
       <Typography>This is the feed page</Typography>

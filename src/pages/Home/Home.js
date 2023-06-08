@@ -6,11 +6,30 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import LoginWithAuth0Button from "../../common/LoginWithAuth0";
 import { Search } from "@mui/icons-material";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    loginWithRedirect,
+    getAccessTokenSilently,
+  } = useAuth0();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log("logged in");
+      navigate("/feed");
+    }
+  }, [isAuthenticated]);
+
   return (
     <Stack flex={1}>
       <Container maxWidth="xl">

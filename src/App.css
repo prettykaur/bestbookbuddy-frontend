@@ -3,6 +3,7 @@
   background-color: #f3f3f3;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .search-result-bubble:hover {

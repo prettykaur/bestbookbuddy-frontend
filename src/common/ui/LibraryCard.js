@@ -1,8 +1,14 @@
 import { Stack, Typography } from "@mui/material";
 import Image from "mui-image";
 import React from "react";
+import BookPlaceholder from "./BookPlaceholder";
+import { useNavigate } from "react-router-dom";
 
-function LibraryCard() {
+function LibraryCard({ bookInfo }) {
+  console.log(bookInfo);
+
+  const navigate = useNavigate();
+
   return (
     <Stack
       p={2}
@@ -11,17 +17,24 @@ function LibraryCard() {
       className="light-grey-hover"
       alignItems={"center"}
       justifyContent={"center"}
+      width={"150px"}
+      onClick={() => navigate(`/book/${bookInfo?.id}`)}
     >
-      <Image
-        alt="book cover"
-        src="https://covers.openlibrary.org/b/id/12560417-M.jpg"
-        style={{ width: 80 }}
-      />
+      {bookInfo?.olCoverId ? (
+        <Image
+          alt="book cover"
+          src={`https://covers.openlibrary.org/b/id/${bookInfo?.olCoverId}-M.jpg`}
+          style={{ width: 80 }}
+        />
+      ) : (
+        <BookPlaceholder width={80} height={112} />
+      )}
+
       <Stack>
         <Typography variant="caption" sx={{ fontWeight: 700, lineHeight: 1 }}>
-          Tuesdays With Morrie
+          {bookInfo?.title}
         </Typography>
-        <Typography variant="caption">Mitch Albom</Typography>
+        <Typography variant="caption">{bookInfo?.authorName}</Typography>
       </Stack>
     </Stack>
   );

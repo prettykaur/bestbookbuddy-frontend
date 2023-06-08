@@ -7,13 +7,16 @@ function LibraryShelf({ children, libraryLabel, count }) {
       <Stack px={2}>
         <Typography variant="h5">{libraryLabel}</Typography>
         <Typography variant="caption">
-          {count}{" "}
-          {count !== 0 ? (count === 1 ? "book" : "books") : "No books yet"}
+          {count === 0 ? "" : count}{" "}
+          {count !== 0 ? (count === 1 ? "book" : "books") : "No books yet :-("}
         </Typography>
       </Stack>
       <Paper>
         <Stack direction={"row"} sx={{ overflowX: "scroll" }} spacing={1} p={1}>
           {children}
+          {count === 0 && (
+            <Typography p={2}>Search and add some books! 📚</Typography>
+          )}
         </Stack>
       </Paper>
     </Stack>
