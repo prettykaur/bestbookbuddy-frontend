@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { CircularProgress, Stack, TextField } from "@mui/material";
+import { Stack, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -9,24 +9,18 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import FormInputField from "../../common/ui/FormInputField";
-import { UserInfoContext } from "../../contexts/UserInfoProvider";
-import { BACKEND_URL } from "../../data/constants";
+import FormInputField from "../../../../common/ui/FormInputField";
+import { UserInfoContext } from "../../../../contexts/UserInfoProvider";
+import { BACKEND_URL } from "../../../../data/constants";
+import { CollectionsContext } from "../ProfileCollections";
 
-export default function EditProfileDialog({
-  open,
-  setOpenDialog,
-  setUpdateData,
-  updateData,
-}) {
+export default function AddCollectionsDialog({ open, setOpenDialog }) {
   const userInfoContext = useContext(UserInfoContext);
+  const collectionsContext = useContext(CollectionsContext);
 
   const [formInputs, setFormInputs] = useState({
-    username: userInfoContext?.userInfo?.username ?? "",
-    email: userInfoContext?.userInfo?.email ?? "",
-    bio: userInfoContext?.userInfo?.bio ?? "",
-    address: userInfoContext?.userInfo?.address ?? "",
-    photoUrl: userInfoContext?.userInfo?.photoUrl ?? "",
+    name: "",
+    description: "",
   });
   const [isLoadingData, setIsLoadingData] = useState(false);
 
@@ -46,21 +40,19 @@ export default function EditProfileDialog({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setIsLoadingData(true);
+
     const accessToken = await getAccessTokenSilently({
       audience: process.env.REACT_APP_AUTH_AUDIENCE,
       scope: "read:current_user openid profile email phone",
     });
 
-    const response = await axios.put(
-      `${BACKEND_URL}/users/${userInfoContext.userInfo.id}`,
+    const response = await axios.post(
+      `${BACKEND_URL}/collections`,
       {
-        username: formInputs.username,
-        email: formInputs.email,
-        bio: formInputs.bio,
-        address: formInputs.address,
-        photoUrl: formInputs.photoUrl,
+        userId: userInfoContext?.userInfo?.id,
+        name: formInputs.name,
+        description: formInputs.description,
       },
       {
         headers: {
@@ -70,10 +62,9 @@ export default function EditProfileDialog({
     );
 
     console.log(response.data);
-    console.log(`updated profle success`);
+    console.log(`create collection request success`);
 
-    userInfoContext?.setUserInfo(response.data);
-    setUpdateData((prevState) => !prevState);
+    collectionsContext?.setUpdateData((prevState) => !prevState);
     setIsLoadingData(false);
     setOpenDialog(false);
   };
@@ -87,42 +78,24 @@ export default function EditProfileDialog({
       fullWidth
       maxWidth="md"
     >
-      <DialogTitle id="responsive-dialog-title">Edit Profile</DialogTitle>
+      <DialogTitle id="responsive-dialog-title">
+        Create New Collection
+      </DialogTitle>
       <DialogContent>
         <Stack spacing={2} p={1}>
           <FormInputField
-            label={"Username"}
-            name={"username"}
-            value={formInputs.username}
-            onChange={handleChange}
-          />
-          <FormInputField
-            disabled={true}
-            label={"Email"}
-            name={"email"}
-            value={formInputs.email}
-            onChange={handleChange}
-          />
-          <FormInputField
-            label={"Address"}
-            name={"address"}
-            value={formInputs.address}
-            onChange={handleChange}
-            helperText={"*For shipping purposes"}
-          />
-          <FormInputField
-            label={"PhotoUrl"}
-            name={"photoUrl"}
-            value={formInputs.photoUrl}
+            label={"Name"}
+            name={"name"}
+            value={formInputs.name}
             onChange={handleChange}
           />
           <TextField
             required
-            name="bio"
-            label="Bio"
+            name="description"
+            label="Description"
             variant="outlined"
             size="small"
-            value={formInputs.bio}
+            value={formInputs.description}
             onChange={handleChange}
             multiline
             rows={4}
@@ -133,12 +106,7 @@ export default function EditProfileDialog({
         <Button autoFocus onClick={() => setOpenDialog(false)}>
           Cancel
         </Button>
-        <Button
-          autoFocus
-          startIcon={isLoadingData ? <CircularProgress /> : null}
-          onClick={handleSubmit}
-          disabled={isLoadingData ? true : false}
-        >
+        <Button disabled={isLoadingData ? true : false} onClick={handleSubmit}>
           Submit
         </Button>
       </DialogActions>

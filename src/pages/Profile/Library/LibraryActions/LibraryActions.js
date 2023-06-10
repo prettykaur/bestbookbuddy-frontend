@@ -21,13 +21,11 @@ function LibraryActions(props) {
         Edit
       </Button>
 
-      {openDialog && (
-        <EditLibraryDialog
-          open={openDialog}
-          setOpenDialog={setOpenDialog}
-          {...props}
-        />
-      )}
+      <EditLibraryDialog
+        open={openDialog}
+        setOpenDialog={setOpenDialog}
+        {...props}
+      />
     </Stack>
   );
 }

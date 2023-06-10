@@ -21,15 +21,13 @@ import { UserInfoContext } from "../../contexts/UserInfoProvider";
 import axios from "axios";
 
 const pages = ["Feed", "Search", "Marketplace"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const navigate = useNavigate();
-  const { user, isAuthenticated, isLoading, logout, getAccessTokenSilently } =
-    useAuth0();
+  const { user, isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
 
   const userInfoContext = React.useContext(UserInfoContext);
 
@@ -59,9 +57,13 @@ function Navbar() {
           }
         );
         console.log("user request went through");
-        console.log(userInfoContext);
+        console.log(response.data);
 
-        userInfoContext.setUserInfo(response.data);
+        const response2 = await axios.get(
+          `${BACKEND_URL}/users/${response.data.id}`
+        );
+
+        userInfoContext.setUserInfo(response2.data);
       } catch (err) {
         console.log(err);
       }

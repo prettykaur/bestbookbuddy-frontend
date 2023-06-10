@@ -1,25 +1,26 @@
-import { Button, CircularProgress, Stack, Typography } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import LibraryCard from "../../../common/ui/LibraryCard";
-import LibraryShelf from "./LibraryShelf";
-import LibraryActions from "./LibraryActions/LibraryActions";
 import { useAuth0 } from "@auth0/auth0-react";
+import { CircularProgress, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import { BACKEND_URL } from "../../../data/constants";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import LibraryCard from "../../../common/ui/LibraryCard";
 import { UserInfoContext } from "../../../contexts/UserInfoProvider";
+import { BACKEND_URL } from "../../../data/constants";
+import LibraryActions from "./LibraryActions/LibraryActions";
+import LibraryShelf from "./LibraryShelf";
+
+export const LibraryContext = createContext();
 
 function ProfileLibrary() {
-  const { user, isAuthenticated, isLoading, logout, getAccessTokenSilently } =
-    useAuth0();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const userInfoContext = useContext(UserInfoContext);
 
   const [isFetchingData, setIsFetchingData] = useState(true);
 
-  const [wantToReadBooks, setWantToReadBooks] = useState([]);
-  const [readingBooks, setReadingBooks] = useState([]);
-  const [readBooks, setReadBooks] = useState([]);
-  const [dnfBooks, setDnfBooks] = useState([]);
+  const [booksInfo, setBooksInfo] = useState([]);
+  const [updateData, setUpdateData] = useState(false);
+
+  const updateLibraryData = () => setUpdateData((prevState) => !prevState);
 
   useEffect(() => {
     const fetchLibraryData = async () => {
@@ -29,43 +30,16 @@ function ProfileLibrary() {
       });
 
       try {
-        axios
-          .get(
-            `${BACKEND_URL}/library/${userInfoContext.userInfo.id}/to-read`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          )
-          .then((res) => setWantToReadBooks(res.data));
-
-        axios
-          .get(
-            `${BACKEND_URL}/library/${userInfoContext.userInfo.id}/reading`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          )
-          .then((res) => setReadingBooks(res.data));
-
-        axios
-          .get(`${BACKEND_URL}/library/${userInfoContext.userInfo.id}/read`, {
+        const response = await axios.get(
+          `${BACKEND_URL}/library/${userInfoContext.userInfo.id}`,
+          {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          })
-          .then((res) => setReadBooks(res.data));
+          }
+        );
 
-        axios
-          .get(`${BACKEND_URL}/library/${userInfoContext.userInfo.id}/dnf`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          .then((res) => setDnfBooks(res.data));
+        setBooksInfo(response.data);
       } catch (err) {
         console.log(err);
       }
@@ -76,7 +50,7 @@ function ProfileLibrary() {
     if (isAuthenticated) {
       fetchLibraryData();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, updateData]);
 
   if (isFetchingData)
     return (
@@ -86,41 +60,48 @@ function ProfileLibrary() {
       </>
     );
 
+  const wantToReadBooks = booksInfo.filter((book) => book.status === "to-read");
+  const readingBooks = booksInfo.filter((book) => book.status === "reading");
+  const readBooks = booksInfo.filter((book) => book.status === "read");
+  const dnfBooks = booksInfo.filter((book) => book.status === "dnf");
+
   return (
-    <Stack spacing={4}>
-      <LibraryActions
-        wtrB={wantToReadBooks}
-        readingB={readingBooks}
-        readB={readBooks}
-        dnfB={dnfBooks}
-      />
-      <LibraryShelf
-        libraryLabel={"Want To Read"}
-        count={wantToReadBooks.length}
-      >
-        {wantToReadBooks.map((book) => (
-          <LibraryCard key={book?.bookId} bookInfo={book?.book} />
-        ))}
-      </LibraryShelf>
+    <LibraryContext.Provider value={updateLibraryData}>
+      <Stack spacing={4}>
+        <LibraryActions
+          wtrB={wantToReadBooks}
+          readingB={readingBooks}
+          readB={readBooks}
+          dnfB={dnfBooks}
+        />
+        <LibraryShelf
+          libraryLabel={"Want To Read"}
+          count={wantToReadBooks.length}
+        >
+          {wantToReadBooks.map((book) => (
+            <LibraryCard key={book?.id} bookInfo={book} />
+          ))}
+        </LibraryShelf>
 
-      <LibraryShelf libraryLabel={"Reading"} count={readingBooks.length}>
-        {readingBooks.map((book) => (
-          <LibraryCard key={book.bookId} bookInfo={book?.book} />
-        ))}
-      </LibraryShelf>
+        <LibraryShelf libraryLabel={"Reading"} count={readingBooks.length}>
+          {readingBooks.map((book) => (
+            <LibraryCard key={book?.id} bookInfo={book} />
+          ))}
+        </LibraryShelf>
 
-      <LibraryShelf libraryLabel={"Read"} count={readBooks.length}>
-        {readBooks.map((book) => (
-          <LibraryCard key={book.bookId} bookInfo={book?.book} />
-        ))}
-      </LibraryShelf>
+        <LibraryShelf libraryLabel={"Read"} count={readBooks.length}>
+          {readBooks.map((book) => (
+            <LibraryCard key={book?.id} bookInfo={book} />
+          ))}
+        </LibraryShelf>
 
-      <LibraryShelf libraryLabel={"Did Not Finish"} count={dnfBooks.length}>
-        {dnfBooks.map((book) => (
-          <LibraryCard key={book.bookId} bookInfo={book?.book} />
-        ))}
-      </LibraryShelf>
-    </Stack>
+        <LibraryShelf libraryLabel={"Did Not Finish"} count={dnfBooks.length}>
+          {dnfBooks.map((book) => (
+            <LibraryCard key={book?.id} bookInfo={book} />
+          ))}
+        </LibraryShelf>
+      </Stack>
+    </LibraryContext.Provider>
   );
 }
 

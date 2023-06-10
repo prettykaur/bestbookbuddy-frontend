@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   CircularProgress,
   Container,
   Paper,
@@ -15,6 +14,7 @@ import { useParams } from "react-router-dom";
 import { BACKEND_URL } from "../../data/constants";
 import { BookInfoContext } from "../../contexts/BookInfoProvider";
 import AddToLibraryBtn from "./AddToLibrary/AddToLibraryBtn";
+import AddToCollectionBtn from "./AddToCollection/AddToCollectionBtn";
 
 function BookPage() {
   const [DB_bookInfo, setDB_bookInfo] = useState(null);
@@ -75,7 +75,6 @@ function BookPage() {
                 />
               ) : (
                 <BookPlaceholder width={"71px"} height={"110px"} />
-              
               )}
 
               <Stack>
@@ -91,8 +90,9 @@ function BookPage() {
                     ? "edition"
                     : "editions"}
                 </Typography>
-                <Stack direction={"row"}>
+                <Stack direction={"row"} spacing={1}>
                   <AddToLibraryBtn bookId={DB_bookInfo.id} />
+                  <AddToCollectionBtn bookId={DB_bookInfo.id} />
                 </Stack>
               </Stack>
             </Stack>

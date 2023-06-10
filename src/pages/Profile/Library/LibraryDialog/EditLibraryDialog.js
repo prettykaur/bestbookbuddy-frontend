@@ -26,6 +26,8 @@ export default function EditLibraryDialog({
   const { user, isAuthenticated, isLoading, logout, getAccessTokenSilently } =
     useAuth0();
 
+  const closeDialog = () => setOpenDialog(false);
+
   //   useEffect(() => {
   //     const checkOrCreateUser = async () => {
   //       const accessToken = await getAccessTokenSilently({
@@ -71,44 +73,61 @@ export default function EditLibraryDialog({
       open={open}
       //   onClose={handleClose}
       aria-labelledby="responsive-dialog-title"
+      scroll="paper"
     >
       <DialogTitle id="responsive-dialog-title">Edit Library</DialogTitle>
       <DialogContent>
-        <Stack spacing={1} p={1} sx={{ overflowY: "scroll" }}>
+        <Stack spacing={1} p={1}>
           {wtrB.length !== 0 && (
             <Typography variant="h6" color={"primary"}>
               Want To Read
             </Typography>
           )}
           {wtrB.map((book) => (
-            <BookCard key={book?.bookId} bookInfo={book?.book} />
+            <BookCard
+              key={book?.id}
+              bookInfo={book}
+              closeDialog={closeDialog}
+            />
           ))}
 
           {readingB.length !== 0 && (
             <Typography variant="h6" color={"primary"}>
-              Want To Read
+              Reading
             </Typography>
           )}
           {readingB.map((book) => (
-            <BookCard key={book?.bookId} bookInfo={book?.book} />
+            <BookCard
+              key={book?.id}
+              bookInfo={book}
+              closeDialog={closeDialog}
+            />
           ))}
 
           {readB.length !== 0 && (
             <Typography variant="h6" color={"primary"}>
-              Want To Read
+              Read
             </Typography>
           )}
           {readB.map((book) => (
-            <BookCard key={book?.bookId} bookInfo={book?.book} />
+            <BookCard
+              key={book?.id}
+              bookInfo={book}
+              closeDialog={closeDialog}
+            />
           ))}
 
           {dnfB.length !== 0 && (
             <Typography variant="h6" color={"primary"}>
-              Want To Read
+              Did Not Finish
             </Typography>
           )}
           {dnfB.map((book) => (
-            <BookCard key={book?.bookId} bookInfo={book?.book} />
+            <BookCard
+              key={book?.id}
+              bookInfo={book}
+              closeDialog={closeDialog}
+            />
           ))}
         </Stack>
       </DialogContent>

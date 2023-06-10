@@ -1,8 +1,8 @@
-import { Stack, Typography } from "@mui/material";
+import { CircularProgress, Stack, Typography } from "@mui/material";
 import Image from "mui-image";
 import React from "react";
-import BookPlaceholder from "./BookPlaceholder";
 import { useNavigate } from "react-router-dom";
+import BookPlaceholder from "./BookPlaceholder";
 
 function LibraryCard({ bookInfo }) {
   console.log(bookInfo);
@@ -24,7 +24,10 @@ function LibraryCard({ bookInfo }) {
         <Image
           alt="book cover"
           src={`https://covers.openlibrary.org/b/id/${bookInfo?.olCoverId}-M.jpg`}
-          style={{ width: 80 }}
+          width={"80px"}
+          height={"112px"}
+          style={{ objectFit: "contain" }}
+          showLoading={<CircularProgress />}
         />
       ) : (
         <BookPlaceholder width={80} height={112} />
@@ -34,7 +37,10 @@ function LibraryCard({ bookInfo }) {
         <Typography variant="caption" sx={{ fontWeight: 700, lineHeight: 1 }}>
           {bookInfo?.title}
         </Typography>
-        <Typography variant="caption">{bookInfo?.authorName}</Typography>
+        <Typography variant="caption">
+          {bookInfo?.authorName?.split(",")[0] ||
+            bookInfo?.author?.split(",")[0]}
+        </Typography>
       </Stack>
     </Stack>
   );

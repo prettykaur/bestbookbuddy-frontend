@@ -1,7 +1,7 @@
-import { Add } from "@mui/icons-material";
-import { Button, Menu, MenuItem } from "@mui/material";
+import { AutoStoriesRounded } from "@mui/icons-material";
+import { IconButton, Menu, MenuItem, Tooltip } from "@mui/material";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { BACKEND_URL } from "../../../data/constants";
 import { UserInfoContext } from "../../../contexts/UserInfoProvider";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -14,8 +14,7 @@ const status = [
 ];
 
 export default function AddToLibraryBtn({ bookId }) {
-  const { user, isAuthenticated, isLoading, logout, getAccessTokenSilently } =
-    useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -38,9 +37,10 @@ export default function AddToLibraryBtn({ bookId }) {
 
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/library/${userInfoContext.userInfo.id}/${selectedStatus}`,
+        `${BACKEND_URL}/library/${userInfoContext.userInfo.id}`,
         {
           bookId,
+          status: selectedStatus,
         },
         {
           headers: {
@@ -86,9 +86,11 @@ export default function AddToLibraryBtn({ bookId }) {
 
   return (
     <>
-      <Button variant="contained" startIcon={<Add />} onClick={handleClick}>
-        Add To Library
-      </Button>
+      <Tooltip title="Add to Library">
+        <IconButton variant="contained" color="primary" onClick={handleClick}>
+          <AutoStoriesRounded />
+        </IconButton>
+      </Tooltip>
 
       <Menu
         id="basic-menu"
