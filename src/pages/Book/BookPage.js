@@ -75,6 +75,7 @@ function BookPage() {
                 />
               ) : (
                 <BookPlaceholder width={"71px"} height={"110px"} />
+              
               )}
 
               <Stack>

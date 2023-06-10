@@ -16,12 +16,15 @@ import { Edit } from "@mui/icons-material";
 import { UserInfoContext } from "../../contexts/UserInfoProvider";
 import ProfilePageTabs from "./Tabs/ProfilePageTabs";
 import SpeedDialTooltipOpen from "../../common/ui/SpeedDial";
+import EditProfileDialog from "./EditProfileDialog";
 
 function ProfilePage() {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [profileInfo, setProfileInfo] = useState();
   const [updateData, setUpdateData] = useState(false);
+
+  const [openDialog, setOpenDialog] = useState(false);
 
   const userInfoContext = useContext(UserInfoContext);
   const { userId } = useParams();
@@ -76,7 +79,20 @@ function ProfilePage() {
               sx={{ width: 100, height: 100 }}
             />
             {isAuthenticated && user.email === profileInfo.email ? (
-              <Button startIcon={<Edit />}>Edit Profile</Button>
+              <>
+                <Button
+                  startIcon={<Edit />}
+                  onClick={() => setOpenDialog(true)}
+                >
+                  Edit Profile
+                </Button>
+                <EditProfileDialog
+                  open={openDialog}
+                  setOpenDialog={setOpenDialog}
+                  setUpdateData={setUpdateData}
+                  updateData={updateData}
+                />
+              </>
             ) : (
               <></>
             )}
