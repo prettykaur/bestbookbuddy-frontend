@@ -2,6 +2,10 @@ import {
   Avatar,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Paper,
   Rating,
   Stack,
@@ -10,30 +14,86 @@ import {
 import Image from "mui-image";
 import React, { useState } from "react";
 import LibraryCard from "./LibraryCard";
-import { ArrowDropDownRounded, ArrowDropUpRounded } from "@mui/icons-material";
+import {
+  ArrowDropDownRounded,
+  ArrowDropUpRounded,
+  Delete,
+  Edit,
+} from "@mui/icons-material";
+import ReviewLikesBtn from "./ReviewLikesBtn";
+import AddReviewDialog from "../../pages/Book/BookReviews/ReviewsDialog/AddReviewDialog";
+import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
+import { BACKEND_URL } from "../../data/constants";
 
-function ReviewCard() {
+function ReviewCard({ reviewInfo, showBookInfo = false, updateData }) {
   const [isShowingMore, setIsShowingMore] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-  let text = `I had serious problems with the way this book is written. Though Grandin's plainspoken writing style is refreshing, I often felt like she was oversimplifying very complex ideas in order to appeal to a scientifically illiterate audience (or worse, to make her arguments more convincing). Statements such as "Autism is a kind of way station on the road from animals to humans" aren't just over-dramatic (and ultimately nonsensical), they're also potentially offensive. Much of the book is purely speculative, and I'm left wondering whether it's really appropriate to write a popular science book that's mostly about completely untested hypotheses (this seems to be a growing trend in popular science literature, but that's another discussion entirely).`;
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+
+  let text = reviewInfo?.body;
+
+  const closeDialog = () => setOpenDialog(false);
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    const accessToken = await getAccessTokenSilently({
+      audience: process.env.REACT_APP_AUTH_AUDIENCE,
+      scope: "read:current_user openid profile email phone",
+    });
+
+    const response = await axios.delete(
+      `${BACKEND_URL}/reviews/${reviewInfo?.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: {
+          userId: reviewInfo?.user?.id,
+        },
+      }
+    );
+
+    updateData();
+    setOpenDeleteDialog(false);
+  };
 
   return (
     <Paper>
       <Stack py={4} px={3} sx={{ flexDirection: { xs: "column", sm: "row" } }}>
-        <Box flex={1}>
-          <LibraryCard />
-        </Box>
+        {showBookInfo && (
+          <Box flex={1}>
+            <LibraryCard bookInfo={reviewInfo?.book} />
+          </Box>
+        )}
         <Box flex={4}>
           <Stack spacing={3}>
             <Stack
               alignItems={"center"}
               sx={{ alignItems: { xs: "center", sm: "flex-start" } }}
             >
-              <Typography variant="h5">Amazing read!</Typography>
-              <Rating value="4" readOnly />
+              <Typography variant="h5">{reviewInfo?.title}</Typography>
+              <Rating value={reviewInfo?.rating} readOnly />
               <Stack direction={"row"} alignItems={"center"} spacing={1} mt={1}>
-                <Avatar alt="syafiq" src="" sx={{ width: 30, height: 30 }} />
-                <Typography variant="caption">Syafiq</Typography>
+                <Avatar
+                  alt={reviewInfo?.user?.username}
+                  src={reviewInfo?.user?.photoUrl}
+                  sx={{ width: 30, height: 30 }}
+                />
+                <Stack>
+                  <Typography variant="caption" fontWeight={700}>
+                    @{reviewInfo?.user?.username}
+                  </Typography>
+                  <Typography variant="caption">
+                    Posted on{" "}
+                    {new Date(reviewInfo?.createdAt).toLocaleDateString(
+                      "en-SG"
+                    )}
+                  </Typography>
+                </Stack>
               </Stack>
             </Stack>
             <Stack>
@@ -63,6 +123,45 @@ function ReviewCard() {
                   </Button>
                 )}
               </Stack>
+
+              <ReviewLikesBtn reviewId={reviewInfo.id} />
+              {isAuthenticated && reviewInfo?.user?.email === user.email && (
+                <>
+                  <Button
+                    startIcon={<Edit />}
+                    onClick={() => setOpenDialog(true)}
+                  >
+                    Edit Review
+                  </Button>
+                  <Button
+                    startIcon={<Delete />}
+                    onClick={() => setOpenDeleteDialog(true)}
+                  >
+                    Delete review
+                  </Button>
+                </>
+              )}
+              <AddReviewDialog
+                open={openDialog}
+                closeDialog={closeDialog}
+                updateData={updateData}
+                bookId={reviewInfo?.book?.id}
+                editMode={true}
+                reviewInfo={reviewInfo}
+              />
+
+              <Dialog fullWidth maxWidth="md" open={openDeleteDialog}>
+                <DialogTitle>Confirm delete?</DialogTitle>
+                <DialogContent>
+                  <Typography>This action cannot be undone.</Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenDeleteDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleDelete}>Confirm</Button>
+                </DialogActions>
+              </Dialog>
             </Stack>
           </Stack>
         </Box>

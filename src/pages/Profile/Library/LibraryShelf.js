@@ -12,7 +12,7 @@ function LibraryShelf({ children, libraryLabel, count }) {
         </Typography>
       </Stack>
       <Paper>
-        <Stack direction={"row"} sx={{ overflowX: "scroll" }} spacing={1} p={1}>
+        <Stack direction={"row"} sx={{ overflowX: "auto" }} spacing={1} p={1}>
           {children}
           {count === 0 && (
             <Typography p={2}>Search and add some books! 📚</Typography>
