@@ -68,12 +68,15 @@ function ProfileLibrary() {
   return (
     <LibraryContext.Provider value={updateLibraryData}>
       <Stack spacing={4}>
-        <LibraryActions
-          wtrB={wantToReadBooks}
-          readingB={readingBooks}
-          readB={readBooks}
-          dnfB={dnfBooks}
-        />
+        {userInfoContext?.userInfo?.id === userId && (
+          <LibraryActions
+            wtrB={wantToReadBooks}
+            readingB={readingBooks}
+            readB={readBooks}
+            dnfB={dnfBooks}
+          />
+        )}
+
         <LibraryShelf
           libraryLabel={"Want To Read"}
           count={wantToReadBooks.length}

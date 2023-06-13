@@ -15,3 +15,42 @@
   background-color: #f9f9f9;
   cursor: pointer;
 }
+
+.purple-gradient {
+  /* animation: rotation 2s infinite linear; */
+
+  background: #9d50bb; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #6e48aa,
+    #9d50bb
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #6e48aa,
+    #9d50bb
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.purple-gradient-child {
+  /* animation: anti-rotate 2s infinite linear;
+  transform: rotateY(90deg); */
+}
+
+@keyframes anti-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-359deg);
+  }
+}

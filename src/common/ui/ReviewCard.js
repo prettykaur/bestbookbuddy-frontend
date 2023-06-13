@@ -131,14 +131,10 @@ function ReviewCard({ reviewInfo, showBookInfo = false, updateData }) {
                   spacing={1}
                   justifyContent={"flex-end"}
                 >
+                  <Button onClick={() => setOpenDialog(true)}>Edit</Button>
                   <Button
-                    variant="outlined"
-                    onClick={() => setOpenDialog(true)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outlined"
+                    variant="contained"
+                    color="error"
                     onClick={() => setOpenDeleteDialog(true)}
                   >
                     Delete

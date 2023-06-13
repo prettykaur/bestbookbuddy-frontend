@@ -51,7 +51,8 @@ function ProfileCollections() {
 
   return (
     <CollectionsContext.Provider value={context}>
-      <CollectionsActionBar />
+      {userInfoContext?.userInfo?.id === userId && <CollectionsActionBar />}
+
       <Stack spacing={4}>
         {collectionsInfo.map((collection) => (
           <CollectionsCard

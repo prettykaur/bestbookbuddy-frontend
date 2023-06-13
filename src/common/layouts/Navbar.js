@@ -79,6 +79,11 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+  const handleFriendsClick = () => {
+    navigate(`/user/${userInfoContext?.userInfo.id}/friends`);
+    setAnchorElUser(null);
+  };
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -231,6 +236,9 @@ function Navbar() {
                 ))} */}
                     <MenuItem onClick={handleProfileClick}>
                       <Typography textAlign="center">Profile</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleFriendsClick}>
+                      <Typography textAlign="center">Friends</Typography>
                     </MenuItem>
                     <MenuItem
                       onClick={() =>

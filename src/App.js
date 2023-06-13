@@ -18,6 +18,7 @@ import ProfileLibrary from "./pages/Profile/Library/ProfileLibrary";
 import ProfileCollections from "./pages/Profile/Collections/ProfileCollections";
 import ProfileReviews from "./pages/Profile/Reviews/ProfileReviews";
 import DiscussionsPage from "./pages/Discussions/DiscussionsPage";
+import FriendsPage from "./pages/Friends/FriendsPage";
 
 class App extends React.Component {
   render() {
@@ -47,6 +48,7 @@ class App extends React.Component {
                 <Route path="collections" element={<ProfileCollections />} />
                 <Route path="reviews" element={<ProfileReviews />} />
               </Route>
+              <Route path="user/:userId/friends" element={<FriendsPage />} />
 
               <Route path="logout" element={<Logout />} />
 

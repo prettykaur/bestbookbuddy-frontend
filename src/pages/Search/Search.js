@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -18,15 +18,11 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import SearchComposer from "./SearchComposer";
 import SearchResultBubble from "./SearchResultBubble";
+import { BACKEND_URL } from "../../data/constants";
+import FriendCard from "../../common/ui/FriendCard";
+import { ErrorTwoTone } from "@mui/icons-material";
 
-const optionsArray = [
-  "None",
-  "Title",
-  "Author",
-  "ISBN",
-  "Category",
-  "Publisher",
-];
+const optionsArray = ["None", "Title", "Author"];
 
 function Search() {
   const [searchInput, setSearchInput] = useState("");
@@ -44,6 +40,8 @@ function Search() {
   };
 
   const handleSearchTypeChange = (e) => {
+    setSearchResults([]);
+    setSearchParams({});
     setSearchType(e.target.value);
   };
 
@@ -62,14 +60,31 @@ function Search() {
     e.preventDefault();
     setCurrentPage(1);
     setIsLoading(true);
-    setSearchParams({ searchInput: searchInput });
 
     try {
-      const response = await axios.get(
-        `https://openlibrary.org/search.json?q=${searchInput}&page=1`
-      );
+      let response;
+
+      if (searchType === "None") {
+        setSearchParams({ query: searchInput });
+        response = await axios.get(
+          `https://openlibrary.org/search.json?q=${searchInput}&page=1`
+        );
+      } else if (searchType === "Title") {
+        setSearchParams({ title: searchInput });
+        response = await axios.get(
+          `https://openlibrary.org/search.json?title=${searchInput}&page=1`
+        );
+      } else if (searchType === "Author") {
+        setSearchParams({ author: searchInput });
+        response = await axios.get(
+          `https://openlibrary.org/search.json?author=${searchInput}&page=1`
+        );
+      }
+
       if (response.data.numFound === 0) {
         setSearchResults("no-results-found");
+        setIsLoading(false);
+        setCurrentPage((prevPage) => prevPage + 1);
         return;
       }
       setSearchResults(response.data.docs);
@@ -79,6 +94,25 @@ function Search() {
 
     setIsLoading(false);
     setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const handleMemberSearch = async (e) => {
+    e.preventDefault();
+    setCurrentPage(1);
+    setIsLoading(true);
+    setSearchParams({ member: searchInput });
+
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/users/search/${searchInput}`
+      );
+      console.log(response);
+      setIsLoading(false);
+      setSearchResults(response.data);
+    } catch (err) {
+      setIsLoading(false);
+      setSearchResults("no-results-found");
+    }
   };
 
   function unique(a, fn) {
@@ -105,38 +139,72 @@ function Search() {
         {/* <pre>{JSON.stringify(currentPage, null, 2)}</pre> */}
         <SearchComposer
           handleSubmit={handleSubmit}
+          handleMemberSearch={handleMemberSearch}
           searchType={searchType}
           handleSearchTypeChange={handleSearchTypeChange}
           optionsArray={optionsArray}
           searchInput={searchInput}
           handleChange={handleChange}
+          isLoading={isLoading}
         />
         <Stack my={5}>
-          {searchResults.length !== 0 && (
+          {/* {!isLoading && searchResults.length !== 0 && (
             <Typography>
-              Showing results for: {searchParams.get("searchInput")}
+              Showing results for: {searchParams.get("query")}
             </Typography>
+          )} */}
+
+          {isLoading && (
+            <Stack justifyContent={"center"} alignItems={"center"}>
+              <CircularProgress />
+              <Typography textAlign={"center"}>Retrieving data...</Typography>
+            </Stack>
           )}
 
-          {isLoading && <CircularProgress />}
-          {searchResults.length !== 0 && (
-            <>
-              {
-                // unique(
-                //   searchResults,
-                //   (a, b) =>
-                //     a.title === b.title &&
-                //     a.author_name?.join(", ") === b.author_name?.join(", ")
-                // )git
-                searchResults.map((result) => (
-                  <SearchResultBubble key={result.key} {...result} />
-                ))
-              }
-              <Button variant="contained" onClick={handleLoadMore}>
-                Load more
-              </Button>
-            </>
+          {searchResults === "no-results-found" && (
+            <Stack
+              direction={"row"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              spacing={1}
+            >
+              <ErrorTwoTone sx={{ fontSize: "4rem" }} color="primary" />
+              <Stack>
+                <Typography variant="h5">No results found!</Typography>
+                <Typography variant="caption">
+                  Check your search terms and try again.
+                </Typography>
+              </Stack>
+            </Stack>
           )}
+
+          {searchType === "Member" &&
+            searchResults !== "no-results-found" &&
+            searchResults.length !== 0 &&
+            searchResults.map((user) => (
+              <FriendCard key={user?.id} userInfo={user} />
+            ))}
+
+          {searchType !== "Member" &&
+            searchResults !== "no-results-found" &&
+            searchResults.length !== 0 && (
+              <>
+                {
+                  // unique(
+                  //   searchResults,
+                  //   (a, b) =>
+                  //     a.title === b.title &&
+                  //     a.author_name?.join(", ") === b.author_name?.join(", ")
+                  // )git
+                  searchResults.map((result) => (
+                    <SearchResultBubble key={result.key} {...result} />
+                  ))
+                }
+                <Button variant="contained" onClick={handleLoadMore}>
+                  Load more
+                </Button>
+              </>
+            )}
         </Stack>
       </Container>
     </Box>

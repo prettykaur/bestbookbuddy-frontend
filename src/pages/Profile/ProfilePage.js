@@ -17,12 +17,15 @@ import { UserInfoContext } from "../../contexts/UserInfoProvider";
 import ProfilePageTabs from "./Tabs/ProfilePageTabs";
 import SpeedDialTooltipOpen from "../../common/ui/SpeedDial";
 import EditProfileDialog from "./EditProfileDialog";
+import AddFriendBtn from "../../common/ui/AddFriendBtn";
 
 function ProfilePage() {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [profileInfo, setProfileInfo] = useState();
   const [updateData, setUpdateData] = useState(false);
+
+  const [friendsList, setFriendsList] = useState([]);
 
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -45,16 +48,31 @@ function ProfilePage() {
         console.log("Get request went through");
 
         setProfileInfo(response.data);
-        userInfoContext.setUserInfo(response.data);
       } catch (err) {
         console.log(err);
       }
     };
 
+    const fetchFriendsData = async () => {
+      const accessToken = await getAccessTokenSilently({
+        audience: process.env.REACT_APP_AUTH_AUDIENCE,
+        scope: "read:current_user openid profile email phone",
+      });
+
+      const response = await axios.get(`${BACKEND_URL}/friends/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      setFriendsList(response.data);
+    };
+
     if (isAuthenticated) {
       fetchUserData();
+      fetchFriendsData();
     }
-  }, [isAuthenticated, updateData]);
+  }, [isAuthenticated, updateData, userId]);
 
   if (profileInfo == null)
     return (
@@ -67,6 +85,13 @@ function ProfilePage() {
         </Container>
       </Box>
     );
+
+  let AreFriends;
+  const friend = friendsList.find(
+    (user) => userInfoContext?.userInfo?.id === +user.id
+  );
+  console.log(friend);
+  if (friend) AreFriends = true;
 
   return (
     <Box flex={1}>
@@ -96,6 +121,9 @@ function ProfilePage() {
             ) : (
               <></>
             )}
+            {isAuthenticated &&
+              user.email !== profileInfo.email &&
+              !AreFriends && <AddFriendBtn userId={userId} />}
           </Stack>
           <Stack>
             <Typography variant="h4">@{profileInfo.username}</Typography>
@@ -104,7 +132,7 @@ function ProfilePage() {
             <Typography>Points: {profileInfo.points}</Typography>
             <Typography>
               Member since{" "}
-              {new Date(profileInfo.createdAt).toLocaleDateString()}
+              {new Date(profileInfo.createdAt).toLocaleDateString("en-SG")}
             </Typography>
           </Stack>
         </Stack>
