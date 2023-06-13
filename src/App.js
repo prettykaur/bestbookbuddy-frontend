@@ -17,6 +17,7 @@ import ProfileInfo from "./pages/Profile/Info/ProfileInfo";
 import ProfileLibrary from "./pages/Profile/Library/ProfileLibrary";
 import ProfileCollections from "./pages/Profile/Collections/ProfileCollections";
 import ProfileReviews from "./pages/Profile/Reviews/ProfileReviews";
+import DiscussionsPage from "./pages/Discussions/DiscussionsPage";
 
 class App extends React.Component {
   render() {
@@ -34,6 +35,11 @@ class App extends React.Component {
                 <Route path="reviews" element={<BookReviews />} />
                 <Route path="discussions" element={<BookDiscussions />} />
               </Route>
+
+              <Route
+                path="book/:bookId/discussions/:discussionId"
+                element={<DiscussionsPage />}
+              />
 
               <Route path="user/:userId" element={<ProfilePage />}>
                 <Route index element={<ProfileInfo />} />

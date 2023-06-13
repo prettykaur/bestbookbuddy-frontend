@@ -65,9 +65,9 @@ function ReviewCard({ reviewInfo, showBookInfo = false, updateData }) {
     <Paper>
       <Stack py={4} px={3} sx={{ flexDirection: { xs: "column", sm: "row" } }}>
         {showBookInfo && (
-          <Box flex={1}>
+          <Stack flex={1} justifyContent={"center"} alignItems={"center"}>
             <LibraryCard bookInfo={reviewInfo?.book} />
-          </Box>
+          </Stack>
         )}
         <Box flex={4}>
           <Stack spacing={3}>
@@ -126,20 +126,24 @@ function ReviewCard({ reviewInfo, showBookInfo = false, updateData }) {
 
               <ReviewLikesBtn reviewId={reviewInfo.id} />
               {isAuthenticated && reviewInfo?.user?.email === user.email && (
-                <>
+                <Stack
+                  direction={"row"}
+                  spacing={1}
+                  justifyContent={"flex-end"}
+                >
                   <Button
-                    startIcon={<Edit />}
+                    variant="outlined"
                     onClick={() => setOpenDialog(true)}
                   >
-                    Edit Review
+                    Edit
                   </Button>
                   <Button
-                    startIcon={<Delete />}
+                    variant="outlined"
                     onClick={() => setOpenDeleteDialog(true)}
                   >
-                    Delete review
+                    Delete
                   </Button>
-                </>
+                </Stack>
               )}
               <AddReviewDialog
                 open={openDialog}

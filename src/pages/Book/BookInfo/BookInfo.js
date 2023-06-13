@@ -120,10 +120,7 @@ function BookInfo() {
                   ? bookInfoContext?.authorInfo?.bio
                   : bookInfoContext?.authorInfo?.bio.value
                 : "Bio Not Available."}
-              {/* {bookInfoContext.authorInfo?.bio.value ?? "N/A"} */}
             </Typography>
-
-            <Typography>Other works:</Typography>
           </Stack>
         </Paper>
       </Box>

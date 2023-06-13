@@ -7,6 +7,7 @@ import { UserInfoContext } from "../../../contexts/UserInfoProvider";
 import { BACKEND_URL } from "../../../data/constants";
 import LibraryActions from "./LibraryActions/LibraryActions";
 import LibraryShelf from "./LibraryShelf";
+import { useParams } from "react-router-dom";
 
 export const LibraryContext = createContext();
 
@@ -20,6 +21,8 @@ function ProfileLibrary() {
   const [booksInfo, setBooksInfo] = useState([]);
   const [updateData, setUpdateData] = useState(false);
 
+  const { userId } = useParams();
+
   const updateLibraryData = () => setUpdateData((prevState) => !prevState);
 
   useEffect(() => {
@@ -30,14 +33,11 @@ function ProfileLibrary() {
       });
 
       try {
-        const response = await axios.get(
-          `${BACKEND_URL}/library/${userInfoContext.userInfo.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await axios.get(`${BACKEND_URL}/library/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
         setBooksInfo(response.data);
       } catch (err) {

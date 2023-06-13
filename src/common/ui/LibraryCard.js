@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import BookPlaceholder from "./BookPlaceholder";
 
 function LibraryCard({ bookInfo }) {
-  console.log(bookInfo);
-
   const navigate = useNavigate();
 
   return (

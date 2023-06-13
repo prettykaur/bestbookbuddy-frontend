@@ -6,13 +6,17 @@ import { BookInfoContext } from "../../../contexts/BookInfoProvider";
 import ReviewCard from "../../../common/ui/ReviewCard";
 import { Add, Edit } from "@mui/icons-material";
 import AddReviewDialog from "./ReviewsDialog/AddReviewDialog";
+import { UserInfoContext } from "../../../contexts/UserInfoProvider";
 
 function BookReviews() {
   const bookInfoContext = useContext(BookInfoContext);
+  const userInfoContext = useContext(UserInfoContext);
 
   const [reviewsData, setReviewsData] = useState([]);
   const [googleData, setGoogleData] = useState();
   const [updateData, setUpdateData] = useState(false);
+
+  const [hasReviewedAlready, setHasReviewedAlready] = useState(false);
 
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -53,6 +57,15 @@ function BookReviews() {
     fetchGoogleReviewsData();
   }, []);
 
+  useEffect(() => {
+    const user = reviewsData?.find(
+      (review) => review.user?.id === userInfoContext?.userInfo?.id
+    );
+    console.log(user);
+    if (user) setHasReviewedAlready(true);
+    else setHasReviewedAlready(false);
+  }, [reviewsData, userInfoContext?.userInfo]);
+
   const updateReviewsData = () => setUpdateData((prevState) => !prevState);
   const closeAddDialog = () => setOpenAddDialog(false);
 
@@ -60,16 +73,19 @@ function BookReviews() {
     <>
       <Stack spacing={3}>
         <Stack spacing={1}>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => setOpenAddDialog(true)}
-          >
-            Add Review
-          </Button>
-          <Button variant="contained" startIcon={<Edit />}>
-            Edit Review
-          </Button>
+          {hasReviewedAlready ? (
+            <Button variant="contained" startIcon={<Edit />}>
+              Edit Review
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={() => setOpenAddDialog(true)}
+            >
+              Add Review
+            </Button>
+          )}
         </Stack>
 
         <Stack spacing={1}>

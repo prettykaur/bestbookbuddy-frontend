@@ -6,6 +6,7 @@ import { UserInfoContext } from "../../../contexts/UserInfoProvider";
 import { BACKEND_URL } from "../../../data/constants";
 import CollectionsActionBar from "./CollectionsActions/CollectionsActionBar";
 import CollectionsCard from "./CollectionsCard";
+import { useParams } from "react-router-dom";
 
 export const CollectionsContext = createContext();
 
@@ -20,6 +21,8 @@ function ProfileCollections() {
     setUpdateData,
   };
 
+  const { userId } = useParams();
+
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const userInfoContext = useContext(UserInfoContext);
@@ -31,14 +34,11 @@ function ProfileCollections() {
         scope: "read:current_user openid profile email phone",
       });
 
-      const response = await axios.get(
-        `${BACKEND_URL}/collections/${userInfoContext?.userInfo?.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BACKEND_URL}/collections/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       setCollectionsInfo(response.data);
       console.log(collectionsInfo);
