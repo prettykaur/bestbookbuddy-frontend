@@ -16,7 +16,9 @@ function Logout() {
               gradient={true}
             />
             <Typography variant="h4">We hate to see you leave...</Typography>
-            <Typography>But we love to see you go... *winky winky*</Typography>
+            <Typography>
+              But we love to watch you go... *winky winky*
+            </Typography>
           </Stack>
         </Stack>
       </Container>
