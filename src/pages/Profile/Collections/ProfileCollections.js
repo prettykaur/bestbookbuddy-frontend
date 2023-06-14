@@ -63,7 +63,9 @@ function ProfileCollections() {
           />
         ))}
       </Stack>
-      <Typography variant="overline">End of collections</Typography>
+      {collectionsInfo.length !== 0 && (
+        <Typography variant="overline">End of collections</Typography>
+      )}
     </CollectionsContext.Provider>
   );
 }

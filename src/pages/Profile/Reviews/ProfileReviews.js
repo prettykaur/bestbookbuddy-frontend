@@ -30,7 +30,7 @@ function ProfileReviews() {
         {/* <pre>{JSON.stringify(reviewsData, null, 2)}</pre> */}
         <Typography variant="caption">
           {reviewsData.length === 0
-            ? "No reviews yet"
+            ? "No reviews yet. :-("
             : reviewsData.length === 1
             ? `1 review`
             : `${reviewsData.length} reviews`}
@@ -44,7 +44,9 @@ function ProfileReviews() {
           />
         ))}
       </Stack>
-      <Typography variant="overline">End of reviews</Typography>
+      {reviewsData.length !== 0 && (
+        <Typography variant="overline">End of reviews</Typography>
+      )}
     </>
   );
 }

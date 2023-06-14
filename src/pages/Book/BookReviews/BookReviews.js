@@ -13,6 +13,8 @@ function BookReviews() {
   const userInfoContext = useContext(UserInfoContext);
 
   const [reviewsData, setReviewsData] = useState([]);
+
+  const [averageRating, setAverageRating] = useState(null);
   const [googleData, setGoogleData] = useState();
   const [updateData, setUpdateData] = useState(false);
 
@@ -29,6 +31,11 @@ function BookReviews() {
         );
 
         setReviewsData(response.data);
+
+        let averageRating = 0;
+        response.data.forEach((review) => (averageRating += +review.rating));
+        averageRating = averageRating / response.data.length;
+        setAverageRating(averageRating);
       } catch (err) {
         setReviewsData([]);
       }
@@ -72,7 +79,11 @@ function BookReviews() {
   return (
     <>
       <Stack spacing={3}>
-        <Stack spacing={1}>
+        <Stack
+          sx={{
+            alignItems: { md: "flex-start" },
+          }}
+        >
           {hasReviewedAlready ? (
             <Button variant="contained" startIcon={<Edit />}>
               Edit Review
@@ -89,7 +100,7 @@ function BookReviews() {
         </Stack>
 
         <Stack spacing={1}>
-          <Typography variant="h4">REAL & TRUE Reviews</Typography>
+          <Typography variant="h4">REAL & LEGIT Reviews</Typography>
           <Paper>
             <Stack p={2} spacing={3}>
               <Stack>
@@ -153,6 +164,17 @@ function BookReviews() {
 
         <Stack>
           <Typography variant="h4">Community Reviews</Typography>
+          {reviewsData.length !== 0 && (
+            <Paper sx={{ padding: 2 }}>
+              <Stack direction={"row"} spacing={2}>
+                <Rating value={+averageRating} precision={0.1} readOnly />
+                <Typography variant="h5">{averageRating.toFixed(2)}</Typography>
+              </Stack>
+              <Typography variant="caption">
+                (based on {reviewsData.length} ratings)
+              </Typography>
+            </Paper>
+          )}
           <Typography variant="overline">
             {reviewsData.length === 0
               ? "No reviews yet. Add one?"
@@ -167,7 +189,9 @@ function BookReviews() {
               updateData={updateReviewsData}
             />
           ))}
-          <Typography variant="overline">End of Reviews</Typography>
+          {reviewsData.length !== 0 && (
+            <Typography variant="overline">End of Reviews</Typography>
+          )}
         </Stack>
       </Stack>
       <AddReviewDialog

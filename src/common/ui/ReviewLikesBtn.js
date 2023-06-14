@@ -38,12 +38,13 @@ function ReviewLikesBtn({ reviewId }) {
       const user = response.data.find(
         (user) => user.id === userInfoContext?.userInfo?.id
       );
+      console.log(user);
       if (user != null) setStatus("liked");
       else setStatus("");
     };
 
     fetchLikesList();
-  }, [updateData]);
+  }, [updateData, userInfoContext?.userInfo]);
 
   const handleLike = async () => {
     // if (userInfoContext?.userInfo?.id)

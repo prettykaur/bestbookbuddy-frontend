@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import AddDiscussionDialog from "./DiscussionsDialog/AddDiscussionDialog";
 import DiscussionCard from "../../../common/ui/DiscussionCard";
 import DiscussionTitleCard from "../../../common/ui/DiscussionTitleCard";
+import { Add } from "@mui/icons-material";
 
 function BookDiscussions() {
   const { bookId } = useParams();
@@ -37,12 +38,24 @@ function BookDiscussions() {
 
   return (
     <Stack>
-      <Button variant="contained" onClick={() => setOpenDialog(true)}>
-        Post a new discussion
-      </Button>
+      <Stack
+        sx={{
+          alignItems: { md: "flex-start" },
+        }}
+      >
+        <Button
+          startIcon={<Add />}
+          variant="contained"
+          onClick={() => setOpenDialog(true)}
+        >
+          Post a new discussion
+        </Button>
+      </Stack>
 
       <Typography variant="overline">
-        {discussionsData.length} discussions
+        {discussionsData.length === 0
+          ? "No discussions yet. :-("
+          : `${discussionsData.length} discussions`}
       </Typography>
       {discussionsData.map((discussion) => (
         <DiscussionTitleCard
@@ -52,7 +65,9 @@ function BookDiscussions() {
           userInfo={discussion.user}
         />
       ))}
-      <Typography variant="overline">End of discussions</Typography>
+      {discussionsData.length !== 0 && (
+        <Typography variant="overline">End of discussions</Typography>
+      )}
 
       <AddDiscussionDialog
         open={openDialog}

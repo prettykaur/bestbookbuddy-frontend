@@ -30,6 +30,7 @@ function FriendsPage() {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      console.log(response.data);
 
       setFriendsList(response.data);
     };
