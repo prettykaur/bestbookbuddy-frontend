@@ -134,61 +134,20 @@ function DiscussionCard({ discussionInfo, bookInfo, userInfo, updateData }) {
           </Stack>
         </Stack>
 
-        {editMode ? (
-          <>
-            <FormInputField
-              label={"Title"}
-              name={"title"}
-              value={title}
-              onChange={handleTitleChange}
-            />
-            <TextField
-              required
-              name="body"
-              placeholder="What is on your mind, my dude?"
-              variant="outlined"
-              size="small"
-              value={body}
-              onChange={handleBodyChange}
-              multiline
-              rows={4}
-            />
-            <Stack direction={"row"} justifyContent={"center"}>
-              <Button onClick={() => setEditMode(false)}>Cancel</Button>
-              <Button onClick={handleEdit}>Submit</Button>
-            </Stack>
-          </>
-        ) : (
-          <>
-            <Typography variant="h5">{discussionInfo?.title}</Typography>
-            <Typography>{discussionInfo?.body}</Typography>
+        <Typography variant="h5">{discussionInfo?.title}</Typography>
+        <Typography>{discussionInfo?.body}</Typography>
 
-            <Stack direction={"row"} justifyContent={"space-between"}>
-              <Stack direction={"row"} alignItems={"center"} spacing={2}>
-                <LikesBtn />
-                <Button
-                  startIcon={<QuestionAnswerOutlined fontSize="small" />}
-                  onClick={() => setReplyMode((prevState) => !prevState)}
-                >
-                  Reply
-                </Button>
-              </Stack>
-
-              {userInfoContext?.userInfo?.id === userInfo?.id && (
-                <Stack direction={"row"}>
-                  <Button onClick={() => setEditMode(true)}>Edit</Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleDelete}
-                  >
-                    Delete
-                  </Button>
-                </Stack>
-              )}
-            </Stack>
-          </>
-        )}
+        <Stack direction={"row"} justifyContent={"space-between"}>
+          <Stack direction={"row"} alignItems={"center"} spacing={2}>
+            <LikesBtn />
+            <Button
+              startIcon={<QuestionAnswerOutlined fontSize="small" />}
+              onClick={() => setReplyMode((prevState) => !prevState)}
+            >
+              Reply
+            </Button>
+          </Stack>
+        </Stack>
 
         {replyMode && (
           <Stack justifyContent={"flex-start"}>

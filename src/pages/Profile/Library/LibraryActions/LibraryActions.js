@@ -2,6 +2,7 @@ import { Button, Stack } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EditLibraryDialog from "../LibraryDialog/EditLibraryDialog";
+import { Add, Edit } from "@mui/icons-material";
 
 function LibraryActions(props) {
   const [openDialog, setOpenDialog] = useState(false);
@@ -13,12 +14,21 @@ function LibraryActions(props) {
   };
 
   return (
-    <Stack spacing={1}>
-      <Button variant="contained" onClick={handleAdd}>
-        Add
+    <Stack
+      sx={{
+        flexDirection: { xs: "column", md: "row" },
+        gap: "8px",
+      }}
+    >
+      <Button variant="contained" onClick={handleAdd} startIcon={<Add />}>
+        Add to library
       </Button>
-      <Button variant="contained" onClick={() => setOpenDialog(true)}>
-        Edit
+      <Button
+        variant="contained"
+        onClick={() => setOpenDialog(true)}
+        startIcon={<Edit />}
+      >
+        Edit library
       </Button>
 
       <EditLibraryDialog

@@ -4,6 +4,7 @@ import { BookInfoContext } from "../../../contexts/BookInfoProvider";
 import axios from "axios";
 import { capitalizeFirst } from "../../../utils/utils";
 import BookPlaceholder from "../../../common/ui/BookPlaceholder";
+import Image from "mui-image";
 
 function BookInfo() {
   const bookInfoContext = useContext(BookInfoContext);
@@ -42,7 +43,7 @@ function BookInfo() {
         <Paper>
           <Stack px={2} py={5} spacing={3} alignItems={"center"}>
             {bookInfoContext?.OL_bookInfo?.covers ? (
-              <img
+              <Image
                 alt="latest edition book cover"
                 src={`https://covers.openlibrary.org/b/id/${bookInfoContext?.OL_bookInfo?.covers[0]}-L.jpg`}
                 style={{ width: "min(100%,300px)" }}
@@ -96,7 +97,7 @@ function BookInfo() {
         <Typography variant="h5">About the author:</Typography>
         <Paper>
           <Stack alignItems={"center"} px={2} py={5} spacing={2}>
-            <img
+            <Image
               alt="latest edition book cover"
               src={`https://covers.openlibrary.org/a/olid/${
                 bookInfoContext?.CONTEXT_bookInfo?.olAuthorKey?.split(", ")[0]

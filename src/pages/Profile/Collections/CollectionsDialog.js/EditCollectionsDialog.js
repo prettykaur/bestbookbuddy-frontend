@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { CircularProgress, Stack, TextField } from "@mui/material";
+import { CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -87,16 +87,20 @@ export default function EditCollectionsDialog({ open, setOpenDialog }) {
       <DialogTitle id="responsive-dialog-title">Edit Collection</DialogTitle>
       <DialogContent>
         <Stack spacing={2} p={1}>
-          {collectionsContext.collectionsInfo.map((collection) => (
-            <CollectionCard
-              key={collection.id}
-              name={collection.name}
-              collectionId={collection.id}
-              userId={userInfoContext?.userInfo?.id}
-              updateData={updateData}
-              closeDialog={closeDialog}
-            />
-          ))}
+          {collectionsContext.collectionsInfo.length === 0 && (
+            <Typography>No collections found!</Typography>
+          )}
+          {collectionsContext.collectionsInfo.length !== 0 &&
+            collectionsContext.collectionsInfo.map((collection) => (
+              <CollectionCard
+                key={collection.id}
+                name={collection.name}
+                collectionId={collection.id}
+                userId={userInfoContext?.userInfo?.id}
+                updateData={updateData}
+                closeDialog={closeDialog}
+              />
+            ))}
         </Stack>
       </DialogContent>
       <DialogActions>

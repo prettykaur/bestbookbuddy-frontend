@@ -77,6 +77,10 @@ export default function EditLibraryDialog({
     >
       <DialogTitle id="responsive-dialog-title">Edit Library</DialogTitle>
       <DialogContent>
+        {wtrB.length === 0 &&
+          readingB.length === 0 &&
+          readB.length === 0 &&
+          dnfB.length === 0 && <Typography>No library data found!</Typography>}
         <Stack spacing={1} p={1}>
           {wtrB.length !== 0 && (
             <Typography variant="h6" color={"primary"}>

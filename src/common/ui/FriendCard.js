@@ -23,6 +23,7 @@ function FriendCard({
   const userInfoContext = useContext(UserInfoContext);
 
   const [requestsList, setRequestsList] = useState([]);
+  const [selfUpdate, setSelfUpdate] = useState(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -44,7 +45,7 @@ function FriendCard({
     };
 
     fetchStatus();
-  }, []);
+  }, [selfUpdate]);
 
   const handleAddFriend = async () => {
     const accessToken = await getAccessTokenSilently({
@@ -63,6 +64,8 @@ function FriendCard({
         },
       }
     );
+
+    setSelfUpdate((prev) => !prev);
   };
 
   const handleAddRejFriend = async (statusId) => {
@@ -84,6 +87,7 @@ function FriendCard({
     );
 
     updateData();
+    setSelfUpdate((prev) => !prev);
   };
 
   let alreadySent = true;

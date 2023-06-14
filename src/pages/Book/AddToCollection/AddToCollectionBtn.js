@@ -96,14 +96,18 @@ export default function AddToCollectionBtn({ bookId }) {
           "aria-labelledby": "basic-button",
         }}
       >
-        {collectionsInfo.map((collection) => (
-          <MenuItem
-            key={collection.id}
-            onClick={() => handleCollectionClick(collection.id)}
-          >
-            <Typography variant="caption">{collection.name}</Typography>
-          </MenuItem>
-        ))}
+        {collectionsInfo.length === 0 && (
+          <MenuItem>No collections found!</MenuItem>
+        )}
+        {collectionsInfo.length !== 0 &&
+          collectionsInfo.map((collection) => (
+            <MenuItem
+              key={collection.id}
+              onClick={() => handleCollectionClick(collection.id)}
+            >
+              <Typography variant="caption">{collection.name}</Typography>
+            </MenuItem>
+          ))}
       </Menu>
     </>
   );

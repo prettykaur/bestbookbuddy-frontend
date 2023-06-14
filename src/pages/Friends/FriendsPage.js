@@ -49,7 +49,12 @@ function FriendsPage() {
             },
           }
         );
-        setRequestsList(response.data);
+
+        const filtered = response.data.filter(
+          (request) => +request.statusId !== 2 && +request.statusId !== 3
+        );
+
+        setRequestsList(filtered);
       } catch (err) {
         console.log(err?.response?.data?.msg === "No friend requests found");
         setRequestsList([]);
@@ -60,10 +65,10 @@ function FriendsPage() {
     fetchRequestsData();
   }, [updateData]);
 
-  useEffect(() => {
-    const newArr = getUniqueObjects(friendsList, requestsList);
-    setDisplayRequestList(newArr);
-  }, [requestsList, friendsList]);
+  // useEffect(() => {
+  //   const newArr = getUniqueObjects(friendsList, requestsList);
+  //   setDisplayRequestList(newArr);
+  // }, [requestsList, friendsList]);
 
   const forceUpdate = () => setUpdateData((prevState) => !prevState);
 
@@ -72,24 +77,14 @@ function FriendsPage() {
       <Container maxWidth="xl">
         <Stack my={5} spacing={2}>
           <Typography variant="h5">
-            Friend Requests ({displayRequestList.length})
+            Friend Requests ({requestsList.length})
           </Typography>
-          {/* {requestsList.length === 0 && "No friend requests yet. :-("}
-          {requestsList.length !== 0 &&
-            requestsList.map((request) => (
-              <FriendCard
-                key={request.id}
-                userInfo={request?.sender}
-                view="accepting"
-                requestId={request.id}
-                updateData={forceUpdate}
-              />
-            ))} */}
+          {requestsList.length === 0 && "No friend requests yet. :-("}
+
           <Stack spacing={1}>
-            {displayRequestList.map((request) => (
-              <Paper>
+            {requestsList.map((request) => (
+              <Paper key={request.id}>
                 <FriendCard
-                  key={request.id}
                   userInfo={request?.sender}
                   view="accepting"
                   requestId={request.id}
@@ -104,9 +99,8 @@ function FriendsPage() {
           <Stack spacing={1}>
             {friendsList.length !== 0 &&
               friendsList.map((user) => (
-                <Paper>
+                <Paper key={user.id}>
                   <FriendCard
-                    key={user.id}
                     userInfo={user}
                     updateData={forceUpdate}
                     view="acceptedFriends"

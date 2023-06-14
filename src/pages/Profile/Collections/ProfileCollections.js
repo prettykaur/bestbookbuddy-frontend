@@ -47,11 +47,11 @@ function ProfileCollections() {
     if (isAuthenticated) {
       fetchCollectionsData();
     }
-  }, [isAuthenticated, updateData]);
+  }, [isAuthenticated, updateData, userInfoContext?.userInfo]);
 
   return (
     <CollectionsContext.Provider value={context}>
-      {userInfoContext?.userInfo?.id === userId && <CollectionsActionBar />}
+      {+userInfoContext?.userInfo?.id === +userId && <CollectionsActionBar />}
 
       <Stack spacing={4}>
         {collectionsInfo.map((collection) => (

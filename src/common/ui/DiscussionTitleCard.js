@@ -10,7 +10,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../../data/constants";
 
-function DiscussionTitleCard({ discussionInfo, bookInfo, userInfo }) {
+function DiscussionTitleCard({
+  discussionInfo,
+  NONPARAM_bookId = null,
+  userInfo,
+}) {
   const navigate = useNavigate();
   const { bookId } = useParams();
 
@@ -36,7 +40,9 @@ function DiscussionTitleCard({ discussionInfo, bookInfo, userInfo }) {
   return (
     <Paper
       onClick={() =>
-        navigate(`/book/${bookId}/discussions/${discussionInfo?.id}`)
+        navigate(
+          `/book/${bookId || NONPARAM_bookId}/discussions/${discussionInfo?.id}`
+        )
       }
     >
       <Stack p={2} spacing={0.5}>

@@ -41,6 +41,7 @@ export default function LikedDiscussion({
         </Stack>
         <DiscussionTitleCard
           discussionInfo={discussionInfo}
+          NONPARAM_bookId={bookId}
           userInfo={userInfo}
         />
       </Stack>

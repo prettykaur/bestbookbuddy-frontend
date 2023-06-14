@@ -20,6 +20,7 @@ import CreatedCollection from "./FeedActivities/CreatedCollection";
 import LikedDiscussion from "./FeedActivities/LikedDiscussion";
 import LikedReview from "./FeedActivities/LikedReview";
 import CreatedFriend from "./FeedActivities/CreatedFriend";
+import { LocalLibraryTwoTone } from "@mui/icons-material";
 
 function Feed() {
   const { getAccessTokenSilently } = useAuth0();
@@ -27,6 +28,7 @@ function Feed() {
   const userInfoContext = useContext(UserInfoContext);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isEndOfList, setIsEndOfList] = useState(false);
   const [feedData, setFeedData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -66,25 +68,29 @@ function Feed() {
       scope: "read:current_user openid profile email phone",
     });
 
-    const response = await axios.get(
-      `${BACKEND_URL}/feed/${userInfoContext?.userInfo?.id}?page=${currentPage}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    setFeedData((prevResult) => [...prevResult, ...response.data]);
-    setCurrentPage((prevPage) => prevPage + 1);
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/feed/${userInfoContext?.userInfo?.id}?page=${currentPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      setFeedData((prevResult) => [...prevResult, ...response.data]);
+      setCurrentPage((prevPage) => prevPage + 1);
+    } catch (err) {
+      if (err?.response?.data?.msg === "No activities found")
+        setIsEndOfList(true);
+    }
   };
 
   if (isLoading)
     return (
-      <>
+      <Stack my={5} justifyContent={"center"} alignItems={"center"}>
         <CircularProgress />
         <Typography>Retrieving info...</Typography>
-      </>
+      </Stack>
     );
 
   return (
@@ -93,6 +99,14 @@ function Feed() {
         <Stack my={5} spacing={3}>
           {/* <pre>{JSON.stringify(feedData, null, 2)}</pre> */}
 
+          {feedData.length === 0 && (
+            <Stack justifyContent={"center"} alignItems={"center"} spacing={1}>
+              <LocalLibraryTwoTone color="primary" fontSize="large" />
+              <Typography>
+                Add friends to see their activities on your feed!
+              </Typography>
+            </Stack>
+          )}
           {feedData.map((activity) => {
             if (activity?.targetDetails?.error) return <></>;
 
@@ -197,10 +211,16 @@ function Feed() {
             return <></>;
           })}
 
-          {feedData.length !== 0 && (
+          {feedData.length !== 0 && !isEndOfList && (
             <Button variant="contained" onClick={handleLoadMore}>
               Load More
             </Button>
+          )}
+
+          {isEndOfList && (
+            <Stack justifyContent={"center"} alignItems={"center"}>
+              <Typography variant="overline">End of feed list</Typography>
+            </Stack>
           )}
         </Stack>
       </Container>

@@ -50,7 +50,7 @@ function ProfileLibrary() {
     if (isAuthenticated) {
       fetchLibraryData();
     }
-  }, [isAuthenticated, updateData]);
+  }, [isAuthenticated, updateData, userInfoContext?.userInfo]);
 
   if (isFetchingData)
     return (
@@ -68,7 +68,7 @@ function ProfileLibrary() {
   return (
     <LibraryContext.Provider value={updateLibraryData}>
       <Stack spacing={4}>
-        {userInfoContext?.userInfo?.id === userId && (
+        {+userInfoContext?.userInfo?.id === +userId && (
           <LibraryActions
             wtrB={wantToReadBooks}
             readingB={readingBooks}
